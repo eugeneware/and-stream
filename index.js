@@ -1,24 +1,64 @@
-var Stream = require('stream');
+var Stream = require('stream')
+  , util = require('util');
+
+function prop(propName) {
+  return function (data) {
+    return data[propName];
+  };
+}
+
+function AndStream(propName) {
+  var keyfn = JSON.stringify;
+  if (typeof propName === 'string') {
+    keyfn = prop(propName);
+  } else if (typeof propName === 'function') {
+    keyfn = propName;
+  }
+
+  this.keyfn = keyfn;
+  this.registry = {};
+  this.writable = false;
+  this.readable = true;
+  this.streams = 0;
+  this.ended = 0;
+}
+
+util.inherits(AndStream, Stream);
+
+AndStream.prototype.stream = function () {
+  return makeStream(this);
+};
 
 module.exports = and;
-function and() {
-  var s = new Stream;
-  s.readable = true;
+function and(propName) {
+  return new AndStream(propName);
+}
+
+function makeStream(andStream) {
+  var s = new Stream();
+  s.readable = false;
   s.writable = true;
 
-  var pipes = 0;
-
   s.write = function (data) {
-    s.emit('data', data);
+    var key = andStream.keyfn(data);
+    if (andStream.registry[key] === undefined) {
+      andStream.registry[key] = 1;
+    } else {
+      andStream.registry[key]++;
+    }
+    if (andStream.registry[key] >= andStream.streams) {
+      andStream.emit('data', data);
+    }
   };
 
-  var ended = 0;
   s.end = function (data) {
     if (arguments.length) s.write(data);
-    ended++;
-    if (pipes == ended) {
-      s.writable = false;
-      s.emit('end');
+    s.writable = false;
+
+    andStream.ended++;
+    if (andStream.ended >= andStream.streams) {
+      andStream.emit('end');
+      andStream.readable = false;
     }
   };
 
@@ -26,13 +66,6 @@ function and() {
     s.writable = false;
   };
 
-  s.on('pipe', function () {
-    pipes++;
-  });
-
-  s.on('unpipe', function () {
-    pipes--;
-  });
-
+  andStream.streams++;
   return s;
 }

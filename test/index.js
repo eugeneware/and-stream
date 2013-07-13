@@ -38,15 +38,51 @@ describe('and-stream', function() {
     as
       .on('data', function (data) {
         n++;
-        console.log(data);
       })
       .on('end', function () {
         expect(n).to.equal(10);
         done();
       });
 
-    makeStream('a').pipe(as);
-    makeStream('a').pipe(as);
-    makeStream('a').pipe(as);
+    makeStream('a').pipe(as.stream());
+    makeStream('a').pipe(as.stream());
+    makeStream('a').pipe(as.stream());
+  });
+
+  it('should be able to join based on a property', function(done) {
+    var as = and('number');
+    var n = 0;
+    as
+      .on('data', function (data) {
+        n++;
+      })
+      .on('end', function () {
+        expect(n).to.equal(10);
+        done();
+      });
+
+    makeStream('a').pipe(as.stream());
+    makeStream('a').pipe(as.stream());
+    makeStream('a').pipe(as.stream());
+  });
+
+  it('should be able to join based on a function', function(done) {
+    var as = and(function (data) {
+      var b = new Buffer(data.name, 'utf8');
+      return b.toString('base64');
+    });
+    var n = 0;
+    as
+      .on('data', function (data) {
+        n++;
+      })
+      .on('end', function () {
+        expect(n).to.equal(10);
+        done();
+      });
+
+    makeStream('a').pipe(as.stream());
+    makeStream('a').pipe(as.stream());
+    makeStream('a').pipe(as.stream());
   });
 });

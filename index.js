@@ -46,7 +46,7 @@ function makeStream(andStream) {
     } else {
       andStream.registry[key]++;
     }
-    if (andStream.registry[key] >= andStream.streams) {
+    if (andStream.registry[key] === andStream.streams) {
       andStream.emit('data', data);
     }
   };
@@ -56,7 +56,7 @@ function makeStream(andStream) {
     s.writable = false;
 
     andStream.ended++;
-    if (andStream.ended >= andStream.streams) {
+    if (andStream.ended === andStream.streams) {
       andStream.emit('end');
       andStream.readable = false;
     }

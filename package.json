@@ -1,0 +1,31 @@
+{
+  "name": "and-stream",
+  "version": "0.0.1",
+  "description": "Filter multiple-streams of incoming objects, and only return objects that are present in all streams.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eugeneware/and-stream"
+  },
+  "keywords": [
+    "and",
+    "intersect",
+    "join",
+    "stream",
+    "streams",
+    "pipe",
+    "all"
+  ],
+  "author": "Eugene Ware <eugene@noblesamurai.com>",
+  "license": "BSD",
+  "dependencies": {
+    "chai": "~1.7.2",
+    "mocha": "~1.12.0"
+  },
+  "devDependencies": {
+    "after": "~0.8.1"
+  }
+}

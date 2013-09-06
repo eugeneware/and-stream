@@ -2,6 +2,8 @@
 
 Node.js Stream to filter multiple-streams of incoming objects, and only return objects that are present in ALL streams.
 
+[![build status](https://secure.travis-ci.org/eugeneware/and-stream.png)](http://travis-ci.org/eugeneware/and-stream)
+
 ## Installation
 
 Install via npm:
